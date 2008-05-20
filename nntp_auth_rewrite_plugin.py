@@ -12,14 +12,14 @@ import pluginbase
 # CONF #
 ######
 
+
 ## user list to accept for rewriting
 userlist = { "someuser":"somepass",
-                    "someotheruser":"someotherpass" }
+             "someotheruser":"someotherpass" }
 
 ## real nntp user/pass to submit to the server
 realuser = "myaccount"
 realpass = "secretpassword"
-
 
 ######
 # PROG #
@@ -41,7 +41,7 @@ class Plugin(pluginbase.PluginBase):
                 part1= data[:begin+len("AUTHINFO USER")]
                 part2 = data[end - len(data):]
                 data = part1 + " " + realuser + " " + part2
-                return data
+                return data.replace(" \r\n","\r\n") # Without this you can reconize that stream has been altered.
         if self.state == 1:
             begin = data.find("AUTHINFO PASS")
             if begin < 0 : return data
@@ -52,6 +52,7 @@ class Plugin(pluginbase.PluginBase):
                 part1= data[:begin+len("AUTHINFO PASS")]
                 part2 = data[end - len(data):]
                 data = part1 + " " + realpass + " " + part2
-            return data
-        return data
+            return data.replace(" \r\n","\r\n") # Without this you can reconize that stream has been altered.
+        # return data # we should never get here
+        print "If you see this we have a bug in the nntp filter ... impossible state reached : %s" % self.state
 

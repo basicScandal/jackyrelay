@@ -40,6 +40,20 @@ destination_port = (80)
 jack_port = (9080)
 bindto = '0.0.0.0'
 
+# New feature : timeout
+# Sets the maxmimum inactivity period of a tunnel *between packets*.
+timeout = 60 # in seconds
+#timeout = 300 # set this on slow links
+
+# New freature : receive from server buf size
+# buf size between jacky and the server
+sbufsize = 650 * 1024 # 650ko
+#sbufsize = 64 * 1024 # set this on slow links
+
+# New freature : receive from client buf size
+# buf size between you and jacky
+cbufsize = 64 * 1024 # 64 ko
+
 
 ###########
 # PLUGINS #
@@ -61,12 +75,14 @@ activeplugins = [] # None activated
 ########
 # PROG #
 ########
+
+#GLOBALS :
 connectedips = {}
 
 
 class Forwarder(Thread):
     '''
-    This gets the url and checks for updates
+    This handles a tunnel.
     '''
     def __init__(self, server, cip):
         Thread.__init__(self)
@@ -84,38 +100,46 @@ class Forwarder(Thread):
             data = plugin.filtercall(data,inout)
         return data
         
-        
+    def shutmedown(self, msg = None):
+        global connectedips
+        if msg: print self.cip, " : ", msg
+        connectedips[self.cip] = connectedips[self.cip] -1
+        self.s.close()
+        self.c.close()
+        self.stop = True
+        print "Closed ", self.cip
+
     def run(self):
+        global connectedips
         print datetime.now(), " Trying to connect to %s:%s" % (destination_host, destination_port)
         self.c.connect((destination_host, int(destination_port)))
         print datetime.now(), " Jack connected to %s:%s" % (destination_host, destination_port)
         sockets = [ self.s, self.c ]
 
-        stop = False
-        while not stop:
-            readysocks, waste1, waste2 = select.select(sockets,[],[])
-            for sock in readysocks :
-                    if sock == self.s:
-                            data = sock.recv(665600) # 650ko
-                            if data : 
-                                self.c.sendall(self.filter(data, "out"))
-                            else :
-                                connectedips[self.cip] = connectedips[self.cip] -1
-                                self.s.close()
-                                self.c.close()
-                                stop = True
-                    if sock == self.c: 
-                            data = sock.recv(65536) # 64 ko
-                            if data : self.s.sendall(self.filter(data, "in"))
-                            else :
-                                connectedips[self.cip] = connectedips[self.cip] -1
-                                self.c.close()
-                                self.s.close()
-                                stop = True
+        self.stop = False
+        timeout = 60 # seconds
+        while not self.stop:
+            readysocks, waste1, waste2 = select.select(sockets, [], [], timeout)
+	    if not len(readysocks) :
+                # we timeouted
+                self.shutmedown("has timeouted")
+        for sock in readysocks :
+            if sock == self.s:
+                data = sock.recv(cbufsize)
+                if data : 
+                    self.c.sendall(self.filter(data, "out"))
+                else :
+                    self.shutmedown("Closed by client")
+            if sock == self.c: 
+                data = sock.recv(sbufsize)
+                if data : self.s.sendall(self.filter(data, "in"))
+                else :
+                    self.shutmedown("Closed by server")
 
 
 def main():
     threadpool = []
+    global connectedips
     srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     #addr = (socket.gethostname() , jack_port)
     addr = (bindto, jack_port)
