@@ -29,7 +29,7 @@ useacl = False # /!\ OPEN RELAY /!\
 ACL = {}
 # ACL = {'129.43.24.87' : 20, 
 #    '24.56.12.190' : 1,
-#    '42.53.94.24': 10]
+#    '42.53.94.24': 10}
 
 #ACL = { '86.238.72.110' : 4 }
 
@@ -37,7 +37,7 @@ ACL = {}
 ## Where to forward ?
 destination_host = ('someserver')
 destination_port = (80)
-jack_port = (9080)
+jack_port = (6724)
 bindto = '0.0.0.0'
 
 # New feature : timeout
@@ -68,7 +68,7 @@ import simple_logger_plugin as simple_logger
 import nntp_auth_rewrite_plugin as nntp_auth_rewrite
 
 ## ORDER IS IMPORTANT
-activeplugins = [] # None activated
+activeplugins = [] # None activated 
 #activeplugins = [ nntp_auth_rewrite, simple_logger ]
 #activeplugins = [ nntp_auth_rewrite ]
 
@@ -117,24 +117,25 @@ class Forwarder(Thread):
         sockets = [ self.s, self.c ]
 
         self.stop = False
-        timeout = 60 # seconds
         while not self.stop:
             readysocks, waste1, waste2 = select.select(sockets, [], [], timeout)
-	    if not len(readysocks) :
-                # we timeouted
+            if not len(readysocks) :  # we timeouted
                 self.shutmedown("has timeouted")
-        for sock in readysocks :
-            if sock == self.s:
-                data = sock.recv(cbufsize)
-                if data : 
-                    self.c.sendall(self.filter(data, "out"))
-                else :
-                    self.shutmedown("Closed by client")
-            if sock == self.c: 
-                data = sock.recv(sbufsize)
-                if data : self.s.sendall(self.filter(data, "in"))
-                else :
-                    self.shutmedown("Closed by server")
+            for sock in readysocks :
+                if sock == self.s:
+                    try :
+                        data = sock.recv(cbufsize)
+                    except :
+                        data = ""
+                    if data : self.c.sendall(self.filter(data, "out"))
+                    else : self.shutmedown("Closed by client")
+                if sock == self.c:
+                    try :
+                        data = sock.recv(sbufsize)
+                    except:
+                        data = ""
+                    if data : self.s.sendall(self.filter(data, "in"))
+                    else : self.shutmedown("Closed by server")
 
 
 def main():
