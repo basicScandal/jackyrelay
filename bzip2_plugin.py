@@ -16,7 +16,11 @@ import bz2
 
 ## Compression level 1 to 9.  9 is best compression.
 COMPRESS_LEVEL = 9
-DIRECTON = "BOTH" # Can be : [ "OUTONLY", "INONLY", "BOTH" ]
+
+## Set what to do for each direction :
+## Can be : [ "COMPRESS", "DECOMPRESS", None ]
+OUT = "COMPRESS"
+IN = "DECOMPRESS"
 
 
 
@@ -28,18 +32,26 @@ class Plugin(pluginbase.PluginBase):
     
     def filtercall(self, data, inout):
         if inout == "in" : 
-            if DIRECTION == "OUTONLY" : return data # conf says do not decompress
-            # Incomeing data : uncompress it.
-            try :
-                data = bz2.decompress(data)
-            except :
-                # not a bzip2 compressed stream
-		print "WARNING : TRYED TO DECOMPRESS NOT COMPRESSED DATA, CHECK DIRECTION CONF VALUE"
-            return bz2.decompress(data)
-        else :
-            if DIRECTION == "INONLY" : return data # conf says do not compress
-            # Outgoing data : compress it.
-            return bz2.compress(data, COMPRESS_LEVEL)
+            if IN == "DECOMPRESS" :
+                try :
+                    data = bz2.decompress(data)
+                except :
+                    # not a bzip2 compressed stream
+            		print "WARNING : TRYED TO DECOMPRESS NOT COMPRESSED DATA, CHECK CONF"
+                return bz2.decompress(data)
+            if IN == "COMPRESS" :
+                return bz2.compress(data, COMPRESS_LEVEL)
+        if inout == "out" :
+            if OUT == "DECOMPRESS" :
+                try :
+                    data = bz2.decompress(data)
+                except :
+                    # not a bzip2 compressed stream
+            		print "WARNING : TRYED TO DECOMPRESS NOT COMPRESSED DATA, CHECK CONF"
+                return bz2.decompress(data)
+            if OUT == "COMPRESS" :
+                return bz2.compress(data, COMPRESS_LEVEL)
+
 
 
 
