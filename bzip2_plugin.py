@@ -16,7 +16,7 @@ import bz2
 
 ## Compression level 1 to 9.  9 is best compression.
 COMPRESS_LEVEL = 9
-DIRECTON = BOTH # Can be : [ "OUTONLY", "INONLY", "BOTH" ]
+DIRECTON = "BOTH" # Can be : [ "OUTONLY", "INONLY", "BOTH" ]
 
 
 
