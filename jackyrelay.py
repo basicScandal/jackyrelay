@@ -67,10 +67,14 @@ import simple_logger_plugin as simple_logger
 ## and replaces it by other login/pass before forwarding.
 import nntp_auth_rewrite_plugin as nntp_auth_rewrite
 
+
+### This one compresses and uncompresses in bzip2
+import bzip2_plugin as bzip2
+
 ## ORDER IS IMPORTANT
 activeplugins = [] # None activated 
-#activeplugins = [ nntp_auth_rewrite, simple_logger ]
-#activeplugins = [ nntp_auth_rewrite ]
+#activeplugins = [ nntp_auth_rewrite, simple_logger , bzip2 ]
+#activeplugins = [ nntp_auth_rewrite , bzip2]
 
 ########
 # PROG #
