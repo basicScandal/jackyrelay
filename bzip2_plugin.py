@@ -14,6 +14,9 @@ import bz2
 # CONF #
 ########
 
+DEBUG = False
+DEBUG = True # Comment this to deactivate
+
 ## Compression level 1 to 9.  9 is best compression.
 COMPRESS_LEVEL = 9
 
@@ -34,11 +37,13 @@ class Plugin(pluginbase.PluginBase):
         if inout == "in" : 
             if IN == "DECOMPRESS" :
                 try :
-                    data = bz2.decompress(data)
+                    decdata = bz2.decompress(data)
                 except :
                     # not a bzip2 compressed stream
             		print "WARNING : TRYED TO DECOMPRESS NOT COMPRESSED DATA, CHECK CONF"
-                return bz2.decompress(data)
+            		if DEBUG : print "Data is : ", data
+        		if decdata : return decdata
+                return data
             if IN == "COMPRESS" :
                 return bz2.compress(data, COMPRESS_LEVEL)
         if inout == "out" :
@@ -48,7 +53,9 @@ class Plugin(pluginbase.PluginBase):
                 except :
                     # not a bzip2 compressed stream
             		print "WARNING : TRYED TO DECOMPRESS NOT COMPRESSED DATA, CHECK CONF"
-                return bz2.decompress(data)
+            		if DEBUG : print "Data is : ", data
+                if decdata : return decdata
+                return data
             if OUT == "COMPRESS" :
                 return bz2.compress(data, COMPRESS_LEVEL)
 
