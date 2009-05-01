@@ -46,10 +46,11 @@ class Plugin(pluginbase.PluginBase):
                 return data
             if IN == "COMPRESS" :
                 return bz2.compress(data, COMPRESS_LEVEL)
+                
         if inout == "out" :
             if OUT == "DECOMPRESS" :
                 try :
-                    data = bz2.decompress(data)
+                    decdata = bz2.decompress(data)
                 except :
                     # not a bzip2 compressed stream
             		print "WARNING : TRYED TO DECOMPRESS NOT COMPRESSED DATA, CHECK CONF"
