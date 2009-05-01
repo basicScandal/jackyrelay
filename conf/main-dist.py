@@ -2,6 +2,8 @@
 # CONF #
 ########
 
+DEBUG = False
+
 ## put to True if you want to activate ACLs
 #useacl = True
 useacl = False # /!\ OPEN RELAY /!\

@@ -21,6 +21,13 @@ class Plugin(pluginbase.PluginBase):
             if not data :
                 print "something is fucked up  %s" % data
                 return data
+            if DEBUG :
+                print "Before compression for %s " % COMPRESSFOR
+                print data
+                bzdata = bz2.compress(data, COMPRESS_LEVEL)
+                print "After compresson for %s " % COMPRESSFOR
+                print bzdata
+                return bzdata
             return bz2.compress(data, COMPRESS_LEVEL)
         else : return data
 
