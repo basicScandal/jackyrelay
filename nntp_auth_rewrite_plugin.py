@@ -8,18 +8,7 @@ if user rights are ok.
 
 import pluginbase
 
-######
-# CONF #
-######
-
-
-## user list to accept for rewriting
-userlist = { "someuser":"somepass",
-             "someotheruser":"someotherpass" }
-
-## real nntp user/pass to submit to the server
-realuser = "myaccount"
-realpass = "secretpassword"
+from conf.nntp_auth_rewrite import *
 
 ######
 # PROG #
