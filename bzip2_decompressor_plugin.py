@@ -23,8 +23,8 @@ class Plugin(pluginbase.PluginBase):
             except :
                 print "Tryed to decompress not compressed data " 
                 if DEBUG : print data
-            if flatdata : return flatdata
-            else : return data
+                return data
+            return flatdata
         else : return data
 
 

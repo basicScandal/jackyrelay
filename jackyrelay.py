@@ -70,18 +70,20 @@ class Forwarder(Thread):
                 self.shutmedown("has timeouted")
             for sock in readysocks :
                 if sock == self.s:
-                    try :
-                        data = sock.recv(cbufsize)
-                    except :
-                        data = ""
-                    if data : self.c.sendall(self.filter(data, "out"))
+                    data = sock.recv(cbufsize)
+                    if data : 
+                        if DEBUG : print "prefitler data :", data
+                        data = self.filter(data, "in")
+                        if DEBUG : print "postfitler data :", data
+                        self.c.sendall(data)
                     else : self.shutmedown("Closed by client")
                 if sock == self.c:
-                    try :
-                        data = sock.recv(sbufsize)
-                    except:
-                        data = ""
-                    if data : self.s.sendall(self.filter(data, "in"))
+                    data = sock.recv(sbufsize)
+                    if data : 
+                        if DEBUG : print "prefitler data :", data
+                        data = self.filter(data, "in")
+                        if DEBUG : print "postfitler data :", data
+                        self.s.sendall(self.filter(data, "in"))
                     else : self.shutmedown("Closed by server")
 
 
