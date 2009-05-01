@@ -25,6 +25,7 @@ class Plugin(pluginbase.PluginBase):
                 if DEBUG : print data
             if flatdata : return flatdata
             else : return data
+        else : return data
 
 
 
