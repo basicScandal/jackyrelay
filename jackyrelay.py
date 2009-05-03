@@ -72,9 +72,9 @@ class Forwarder(Thread):
                 if sock == self.s:
                     data = sock.recv(cbufsize)
                     if data : 
-                        if DEBUG : print "prefitler data for %s :" % ("in", data)
+                        if DEBUG : print "prefitler data for %s : %s" % ("in", data)
                         data = self.filter(data, "in")
-                        if DEBUG : print "postfitler data for %s :" % ("in", data)
+                        if DEBUG : print "postfitler data for %s : %s" % ("in", data)
                         self.c.sendall(data)
                     else : self.shutmedown("Closed by client")
                 if sock == self.c:
