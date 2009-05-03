@@ -61,3 +61,10 @@ activeplugins = [] # None activated
 #activeplugins = [ bzip2_decompressor, nntp_auth_rewrite, simple_logger , bzip2_compressor ]
 #activeplugins = [ nntp_auth_rewrite , bzip2_compressor ]
 #activeplugins = [ bzip2_decompressor, nntp_auth_rewrite ]
+
+
+
+
+
+
+
