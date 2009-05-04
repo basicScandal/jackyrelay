@@ -30,5 +30,8 @@ class Plugin(pluginbase.PluginBase):
                 return bzdata
             return bz2.compress(data, COMPRESS_LEVEL)
         else : return data
+    
+    def whoami(self):
+        return "Bzip2 compressor"
 
 

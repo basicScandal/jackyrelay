@@ -30,4 +30,7 @@ class Plugin(pluginbase.PluginBase):
         if inout == "in" : self.hdl_in.write(" <--  " + data)
         else : self.hdl_out.write(" -->  " + data)
         return data
+    
+    def whoami(self):
+        return "Simple logger"
 

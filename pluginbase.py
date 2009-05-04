@@ -13,5 +13,7 @@ class PluginBase:
         return True
     def filtercall(self, data, inout):
         return data
+    def whoami(self):
+        return "Not implemented ... whoami() call"
 
 

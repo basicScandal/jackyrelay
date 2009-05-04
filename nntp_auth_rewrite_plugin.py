@@ -44,4 +44,7 @@ class Plugin(pluginbase.PluginBase):
             return data.replace(" \r\n","\r\n") # Without this you can reconize that stream has been altered.
         # return data # we should never get here
         print "If you see this we have a bug in the nntp filter ... impossible state reached : %s" % self.state
+    
+    def whoami(self):
+        return "nntp auth"
 

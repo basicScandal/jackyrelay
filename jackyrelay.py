@@ -45,9 +45,9 @@ class Forwarder(Thread):
     def filter(self, data,inout):
         if DEBUG : print "prefitler data for %s : %s" % ("in", data)
         for plugin in self.plugins:
-            if DEBUG : print "Applying %s plugin filter" % plugin.__class__.__module
+            if DEBUG : print "Applying %s plugin filter" % plugin.whoami()
             data = plugin.filtercall(data,inout)
-            if DEBUG : print "postfitler data for %s after %s filter: %s" % ("in", plugin.__class__.__module, data)
+            if DEBUG : print "postfitler data for %s after %s filter: %s" % ("in", plugin.whoami(), data)
         return data
         
     def shutmedown(self, msg = None):

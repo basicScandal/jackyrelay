@@ -40,6 +40,9 @@ class Plugin(pluginbase.PluginBase):
                     return data
                 return flatdata
         else : return data
+    
+    def whoami(self):
+        return "Bzip2 decompressor"
 
 
 
