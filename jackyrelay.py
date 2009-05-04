@@ -73,22 +73,28 @@ class Forwarder(Thread):
                 self.shutmedown("has timeouted")
             for sock in readysocks :
                 if sock == self.s:
-                    data = sock.recv(cbufsize)
+                    try :
+                        data = sock.recv(cbufsize)
+                    except :
+                        self.shutmedown("hardlink dropped by client on recv")
                     if data : 
                         data = self.filter(data, "out")
                         try:
                             self.c.sendall(data)
                         except :
-                            self.shutmedown("hardlink dropped by server")
+                            self.shutmedown("hardlink dropped by server on sendall")
                     else : self.shutmedown("Closed by client")
                 if sock == self.c:
-                    data = sock.recv(sbufsize)
+                    try :
+                        data = sock.recv(sbufsize)
+                    except :
+                        self.shutmedown("hardlink dropped by server on recv")
                     if data : 
                         data = self.filter(data, "in")
                         try :
                             self.s.sendall(data)
                         except :
-                            self.shutmedown("hardlink dropped by client")
+                            self.shutmedown("hardlink dropped by client on sendall")
                     else : self.shutmedown("Closed by server")
 
 
