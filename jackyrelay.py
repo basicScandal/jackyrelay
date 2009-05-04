@@ -76,12 +76,19 @@ class Forwarder(Thread):
                     data = sock.recv(cbufsize)
                     if data : 
                         data = self.filter(data, "out")
-                        self.c.sendall(data)
+                        try:
+                            self.c.sendall(data)
+                        except :
+                            self.shutmedown("hardlink dropped by server")
                     else : self.shutmedown("Closed by client")
                 if sock == self.c:
                     data = sock.recv(sbufsize)
                     if data : 
-                        self.s.sendall(self.filter(data, "in"))
+                        data = self.filter(data, "in")
+                        try :
+                            self.s.sendall(data)
+                        except :
+                            self.shutmedown("hardlink dropped by client")
                     else : self.shutmedown("Closed by server")
 
 
