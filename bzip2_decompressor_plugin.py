@@ -25,7 +25,7 @@ class Plugin(pluginbase.PluginBase):
                     flatdata = bz2.decompress(data)
                 except :
                     print "Tryed to decompress not compressed data " 
-                    if DEBUG : print data
+                    print data
                     return data
                 
                 print "After decompresson for %s " % DECOMPRESSFOR

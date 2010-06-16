@@ -12,6 +12,7 @@ plugin based filters support
 """
 
 import time, socket, select
+import threading
 from threading import Thread
 from datetime import datetime
 
@@ -36,15 +37,15 @@ class Forwarder(Thread):
         self.s = server
         self.c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.cip = cip
-        self.plugins = []
-        for plugin in activeplugins:
-            newplugin = plugin.Plugin(self.cip)
-            self.plugins.append(newplugin)
+        #self.plugins = []
+        #for plugin in activeplugins:
+        #    newplugin = plugin.Plugin(self.cip)
+        #    self.plugins.append(newplugin)
 
     
     def filter(self, data,inout):
         if DEBUG : print "prefitler data for %s : %s" % ("in", data)
-        for plugin in self.plugins:
+        for plugin in self.ld.plugins:
             if DEBUG : print "Applying %s plugin filter" % plugin.whoami()
             data = plugin.filtercall(data,inout)
             if DEBUG : print "postfitler data for %s after %s filter: %s" % ("in", plugin.whoami(), data)
@@ -65,6 +66,12 @@ class Forwarder(Thread):
         self.c.connect((destination_host, int(destination_port)))
         print datetime.now(), " Jack connected to %s:%s" % (destination_host, destination_port)
         sockets = [ self.s, self.c ]
+
+        self.ld = threading.local()
+        self.ld.plugins = []
+        for plugin in activeplugins:
+            newplugin = plugin.Plugin(self.cip)
+            self.ld.plugins.append(newplugin)
 
         self.stop = False
         while not self.stop:
